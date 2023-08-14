@@ -1,5 +1,12 @@
-import React from "react";
-import { useRoutes, Link, useParams, Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  useRoutes,
+  Link,
+  useParams,
+  Navigate,
+  Outlet,
+  useNavigate,
+} from "react-router-dom";
 
 const users = ["0", "1", "2", "3", "4"];
 
@@ -9,11 +16,12 @@ const routes = () => [
     element: <MainPage />,
   },
   {
-    path: "users/",
+    path: "users/:id?",
+    element: <UsersList />,
     children: [
-      { path: ":id?", element: <UsersList /> },
-      { path: ":id/profile", element: <UserInfo /> },
-      { path: ":id/edit", element: <UserEdit /> },
+      { path: "profile", element: <UserInfo /> },
+      { path: "edit", element: <UserEdit /> },
+      { path: "*", element: <Navigate to={"../profile"} /> },
     ],
   },
   {
@@ -24,16 +32,22 @@ const routes = () => [
 
 const UsersList = () => {
   const { id } = useParams();
-  if (id) {
-    return <Navigate to={`/users/${id}/profile`} />;
-  }
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (id) {
+      navigate(`users/${id}/profile`);
+      // return <Navigate to={`/users/${id}/profile`} />;
+    }
+  }, []);
   return (
     <>
-      {users.map((user) => (
-        <p key={user}>
-          <Link to={`/users/${user}/profile`}>User {user}</Link>
-        </p>
-      ))}
+      {!id &&
+        users.map((user) => (
+          <p key={user}>
+            <Link to={`/users/${user}/profile`}>User {user}</Link>
+          </p>
+        ))}
+      <Outlet />
     </>
   );
 };
@@ -58,7 +72,7 @@ const UserInfo = () => {
 const UserEdit = () => {
   const { id } = useParams();
   const user = users.find((user) => user === id);
-  if (!user) return <Navigate to="/users" />;
+  // if (!user) return <Navigate to="/users" />;
   return (
     <>
       <p>
