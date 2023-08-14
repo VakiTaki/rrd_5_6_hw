@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   useRoutes,
   Link,
   useParams,
   Navigate,
   Outlet,
-  useNavigate,
+  useLocation,
 } from "react-router-dom";
 
 const users = ["0", "1", "2", "3", "4"];
@@ -17,7 +17,7 @@ const routes = () => [
   },
   {
     path: "users/:id?",
-    element: <UsersList />,
+    element: <UsersLayout />,
     children: [
       { path: "profile", element: <UserInfo /> },
       { path: "edit", element: <UserEdit /> },
@@ -30,14 +30,23 @@ const routes = () => [
   },
 ];
 
+const UsersLayout = () => {
+  const { id } = useParams();
+  const location = useLocation();
+  if (!id) return <UsersList />;
+  if (location.pathname === `/users/${id}`) {
+    return <Navigate to={`/users/${id}/profile`} />;
+  }
+  return (
+    <>
+      UserLayout {id}
+      <Outlet />
+    </>
+  );
+};
+
 const UsersList = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (id) {
-      navigate(`users/${id}/profile`);
-    }
-  }, []);
   return (
     <>
       {!id &&
