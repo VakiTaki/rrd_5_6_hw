@@ -1,12 +1,31 @@
 import React from "react";
-import { Route, Switch, Redirect, Link, useParams } from "react-router-dom";
+import { useRoutes, Link, useParams, Navigate } from "react-router-dom";
 
 const users = ["0", "1", "2", "3", "4"];
+
+const routes = () => [
+  {
+    path: "",
+    element: <MainPage />,
+  },
+  {
+    path: "users/",
+    children: [
+      { path: ":id?", element: <UsersList /> },
+      { path: ":id/profile", element: <UserInfo /> },
+      { path: ":id/edit", element: <UserEdit /> },
+    ],
+  },
+  {
+    path: "*",
+    element: <Navigate to={"/"} />,
+  },
+];
 
 const UsersList = () => {
   const { id } = useParams();
   if (id) {
-    return <Redirect to={`/users/${id}/profile`} />;
+    return <Navigate to={`/users/${id}/profile`} />;
   }
   return (
     <>
@@ -22,7 +41,7 @@ const UsersList = () => {
 const UserInfo = () => {
   const { id } = useParams();
   const user = users.find((user) => user === id);
-  if (!user) return <Redirect to="/users" />;
+  if (!user) return <Navigate to="/users" />;
   return (
     <>
       <p>
@@ -39,7 +58,7 @@ const UserInfo = () => {
 const UserEdit = () => {
   const { id } = useParams();
   const user = users.find((user) => user === id);
-  if (!user) return <Redirect to="/users" />;
+  if (!user) return <Navigate to="/users" />;
   return (
     <>
       <p>
@@ -61,6 +80,7 @@ const MainPage = () => {
 };
 
 function App() {
+  const elements = useRoutes(routes());
   return (
     <div>
       <h1>App</h1>
@@ -71,13 +91,15 @@ function App() {
         <Link to="/">Main Page</Link>
       </p>
       <hr />
-      <Switch>
-        <Route path="/" component={MainPage} exact />
-        <Route path="/users/:id/edit" component={UserEdit} />
-        <Route path="/users/:id/profile" component={UserInfo} />
-        <Route path="/users/:id?" component={UsersList} />
-        <Redirect to="/" />
-      </Switch>
+      {elements}
+      {/* <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/users" element={<UsersList />}>
+          <Route path="/users/:id/edit" element={<UserEdit />} />
+          <Route path="/users/:id/profile" element={<UserInfo />} />
+        </Route>
+        <Route to="*" element={<Navigate to={"/"} />} />
+      </Routes> */}
     </div>
   );
 }
