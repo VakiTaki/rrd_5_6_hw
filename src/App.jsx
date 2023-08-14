@@ -39,7 +39,6 @@ const UsersLayout = () => {
   }
   return (
     <>
-      UserLayout {id}
       <Outlet />
     </>
   );
