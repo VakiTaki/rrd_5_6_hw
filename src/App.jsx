@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   useRoutes,
   Link,
@@ -36,7 +36,6 @@ const UsersList = () => {
   useEffect(() => {
     if (id) {
       navigate(`users/${id}/profile`);
-      // return <Navigate to={`/users/${id}/profile`} />;
     }
   }, []);
   return (
@@ -72,7 +71,7 @@ const UserInfo = () => {
 const UserEdit = () => {
   const { id } = useParams();
   const user = users.find((user) => user === id);
-  // if (!user) return <Navigate to="/users" />;
+  if (!user) return <Navigate to="/users" />;
   return (
     <>
       <p>
@@ -106,14 +105,6 @@ function App() {
       </p>
       <hr />
       {elements}
-      {/* <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/users" element={<UsersList />}>
-          <Route path="/users/:id/edit" element={<UserEdit />} />
-          <Route path="/users/:id/profile" element={<UserInfo />} />
-        </Route>
-        <Route to="*" element={<Navigate to={"/"} />} />
-      </Routes> */}
     </div>
   );
 }
